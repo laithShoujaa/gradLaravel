@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class CreateCardsTable extends Migration {
+
+	public function up()
+	{
+		Schema::create('cards', function(Blueprint $table) {
+			$table->increments('id');
+			$table->timestamps();
+			$table->softDeletes();
+			$table->integer('userID')->unsigned();
+			$table->enum('typeCard', array('nfc', 'smartHome'));
+			$table->string('name');
+			$table->date('birthDate');
+			$table->enum('gender', array('male', 'femal'));
+			$table->string('location')->nullable();
+            $table->enum('blood',['AB+','AB-','A+','A-','B+','B-','O+','O-'])->nullable();
+			$table->string('phone');
+			$table->bigInteger('passcode');
+			$table->string('macAddress')->nullable();
+			$table->integer('picId')->unsigned()->nullable();
+
+		});
+	}
+
+	public function down()
+	{
+		Schema::drop('cards');
+	}
+}
