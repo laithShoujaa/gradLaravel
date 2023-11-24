@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CardsController;
 use App\Http\Controllers\UsersController;
+use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -25,4 +26,5 @@ Route::post('/register',[UsersController::class,'register']);
 Route::post('/login',[UsersController::class,'login']);
 Route::post('/logout',[UsersController::class,'logout'])->middleware('auth:sanctum');
 Route::post('/verify',[UsersController::class,'verify']);
-Route::post('/create_account',[CardsController::class,'create_account'])->middleware('auth:sanctum');
+Route::post('/addCard',[CardsController::class,'addCard'])->middleware('auth:sanctum');
+Route::get('/userDetails',[UsersController::class,'userDetails'])->middleware('auth:sanctum');

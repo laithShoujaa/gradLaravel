@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cards;
 use App\Models\Users;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Envelope;
@@ -14,6 +15,27 @@ use Illuminate\Support\Facades\Mail;
 
 class UsersController extends Controller
 {
+
+    public function userDetails(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $card = Cards::where('id', $user['cardId'])->first();
+            return response()->json([
+                "state" => true,
+                "data" => [
+                    "name" => $card["name"],
+                    "passCode" => $card["passcode"],
+                    "userID" => $user["userID"]
+                ]
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                "state" => false,
+                "data" => $e->getMessage()
+            ]);
+        }
+    }
 
     public function verify(Request $request)
     {
@@ -30,7 +52,6 @@ class UsersController extends Controller
             'state' => true,
             'token' => $token
         ]);
-
     }
 
     public function register(Request $request)
@@ -38,13 +59,13 @@ class UsersController extends Controller
 
         $email = Users::where("email", $request->email)->first();
         if ($email == null) {
-            $verf = 0;//عملية توليد اربع ارقان عشوتئية
+            $verf = 0; //عملية توليد اربع ارقان عشوتئية
             for ($i = 0; $i < 4; $i++) {
                 $verf *= 10;
                 $verf += random_int(1, 9);
             }
-            $data = array('name'=>$verf);
-            $email=$request->email;
+            $data = array('name' => $verf);
+            $email = $request->email;
 
             /*Mail::send(['text'=>'mail'], $data, function($message,$add=$email) {
                 $message->to($add, 'Tutorials Point')->subject
@@ -54,7 +75,7 @@ class UsersController extends Controller
             //email send here
             return response()->json([
                 'state' => true,
-                'data' => $verf
+                'data' => strval($verf)
             ]);
         } else {
             return response()->json([
@@ -62,7 +83,6 @@ class UsersController extends Controller
                 'data' => "email already exist"
             ]);
         }
-
     }
 
     public function login(Request $request)
@@ -96,7 +116,6 @@ class UsersController extends Controller
         } catch (Exception $e) {
             return response()->json($e->getMessage());
         }
-
     }
     public function logout(Request $request)
     {
@@ -104,5 +123,3 @@ class UsersController extends Controller
         return true;
     }
 }
-
-?>

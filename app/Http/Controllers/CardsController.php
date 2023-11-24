@@ -5,15 +5,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Cards;
 use App\Models\Users;
-//use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Validator;
+//use Validator;
 class CardsController extends Controller
 {
-    public function create_account(Request $request){
+    public function addCard(Request $request){
         $create= $request->all();
-        $validator=Validator::make( $create,[
+        $validator=$request->validate([
             "name"=> "required",
             "birthDate"=>"required",
             "gender"=> "required",
