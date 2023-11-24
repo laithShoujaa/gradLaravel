@@ -69,6 +69,45 @@ picId*/
         }
     }
 
+    public function userCard()
+    {
+        try {
+            $user = Auth::user();
+            /*
+نصوص كاملة
+id
+created_at
+updated_at
+deleted_at
+userID
+typeCard
+name
+birthDate
+gender
+location
+blood
+phone
+passcode
+macAddress
+picId*/
+$id=$user["cardId"];
+
+            $cards = Cards::where('id', $id)->where('typeCard', 'nfc')->first([
+                'name', 'passcode', 'picId','gender','birthDate','blood','location','phone']);
+            return response()->json([
+                "state" => true,
+                "data" => [
+                    "card" => $cards
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                "state" => false,
+                "data" => $e->getMessage()
+            ]);
+        }
+    }
+
     public function addCard(Request $request)
     {
         $create = $request->all();

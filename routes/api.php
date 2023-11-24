@@ -30,3 +30,4 @@ Route::post('/addCard',[CardsController::class,'addCard'])->middleware('auth:san
 Route::get('/userDetails',[UsersController::class,'userDetails'])->middleware('auth:sanctum');
 Route::get('/usersCards',[CardsController::class,'usersCards'])->middleware('auth:sanctum');
 Route::get('/counts',[CardsController::class,'counts'])->middleware('auth:sanctum');
+Route::get('/profile',[CardsController::class,'userCard'])->middleware('auth:sanctum');
