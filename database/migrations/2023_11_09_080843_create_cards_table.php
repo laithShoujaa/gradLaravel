@@ -14,12 +14,12 @@ class CreateCardsTable extends Migration {
 			$table->integer('userID')->unsigned();
 			$table->enum('typeCard', array('nfc', 'smartHome'));
 			$table->string('name');
-			$table->date('birthDate');
-			$table->enum('gender', array('male', 'femal'));
+			$table->date('birthDate')->nullable();
+			$table->enum('gender', array('male', 'femal'))->nullable();
 			$table->string('location')->nullable();
             $table->enum('blood',['AB+','AB-','A+','A-','B+','B-','O+','O-'])->nullable();
-			$table->string('phone');
-			$table->bigInteger('passcode');
+			$table->string('phone')->nullable();
+			$table->bigInteger('passcode')->nullable();
 			$table->string('macAddress')->nullable();
 			$table->integer('picId')->unsigned()->nullable();
 

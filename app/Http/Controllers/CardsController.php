@@ -12,6 +12,26 @@ use Illuminate\Support\Facades\Auth;
 //use Validator;
 class CardsController extends Controller
 {
+    public function counts()
+    {
+        try {
+            $id = Auth::id();
+            $nfcCount = Cards::where('userID', $id)->where('typeCard', 'nfc')->count();
+            $smartHomeCount = Cards::where('userID', $id)->where('typeCard', 'smartHome')->count();
+            return response()->json([
+                "state" => true,
+                "data" => [
+                    "nfcCount" => $nfcCount,
+                    "smartHomeCount" => $smartHomeCount
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                "state" => false,
+                "data" => $e->getMessage()
+            ]);
+        }
+    }
     public function usersCards()
     {
         try {
@@ -74,7 +94,7 @@ picId*/
             "location" => $create["location"],
             "typeCard" => $create["typeCard"],
             "blood" => $request->blood,
-            "passcode" => rand(1000000000, 9999999999),
+            "passcode" => $create["typeCard"]=='nfc'? rand(1000000000, 9999999999):null,
             "userID" => Auth::id()
 
         ]);
