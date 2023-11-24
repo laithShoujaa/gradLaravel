@@ -28,3 +28,4 @@ Route::post('/logout',[UsersController::class,'logout'])->middleware('auth:sanct
 Route::post('/verify',[UsersController::class,'verify']);
 Route::post('/addCard',[CardsController::class,'addCard'])->middleware('auth:sanctum');
 Route::get('/userDetails',[UsersController::class,'userDetails'])->middleware('auth:sanctum');
+Route::get('/usersCards',[CardsController::class,'usersCards'])->middleware('auth:sanctum');
