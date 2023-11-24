@@ -31,3 +31,4 @@ Route::get('/userDetails',[UsersController::class,'userDetails'])->middleware('a
 Route::get('/usersCards',[CardsController::class,'usersCards'])->middleware('auth:sanctum');
 Route::get('/counts',[CardsController::class,'counts'])->middleware('auth:sanctum');
 Route::get('/profile',[CardsController::class,'userCard'])->middleware('auth:sanctum');
+Route::post('/cardData',[CardsController::class,'cardData']);

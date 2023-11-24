@@ -69,6 +69,27 @@ picId*/
         }
     }
 
+    public function cardData(Request $request)
+    {
+        try {
+            $userId = Users::where('userID', $request->userID)->value('id');
+            $card = Cards::where('userId', $userId)->where('passcode', $request->passcode)->first([
+                'name', 'passcode', 'picId', 'gender', 'birthDate', 'blood', 'location', 'phone'
+            ]);
+            return response()->json([
+                "state" => true,
+                "data" => [
+                    "card" => $card
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                "state" => false,
+                "data" => $e->getMessage()
+            ]);
+        }
+    }
+
     public function userCard()
     {
         try {
@@ -90,10 +111,11 @@ phone
 passcode
 macAddress
 picId*/
-$id=$user["cardId"];
+            $id = $user["cardId"];
 
             $cards = Cards::where('id', $id)->where('typeCard', 'nfc')->first([
-                'name', 'passcode', 'picId','gender','birthDate','blood','location','phone']);
+                'name', 'passcode', 'picId', 'gender', 'birthDate', 'blood', 'location', 'phone'
+            ]);
             return response()->json([
                 "state" => true,
                 "data" => [
@@ -133,7 +155,7 @@ $id=$user["cardId"];
             "location" => $create["location"],
             "typeCard" => $create["typeCard"],
             "blood" => $request->blood,
-            "passcode" => $create["typeCard"]=='nfc'? rand(1000000000, 9999999999):null,
+            "passcode" => $create["typeCard"] == 'nfc' ? rand(1000000000, 9999999999) : null,
             "userID" => Auth::id()
 
         ]);
