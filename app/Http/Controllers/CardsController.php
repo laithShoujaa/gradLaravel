@@ -76,12 +76,19 @@ picId*/
             $card = Cards::where('userId', $userId)->where('passcode', $request->passcode)->first([
                 'name', 'passcode', 'picId', 'gender', 'birthDate', 'blood', 'location', 'phone'
             ]);
-            return response()->json([
+            if($card!=null)
+            {return response()->json([
                 "state" => true,
                 "data" => [
                     "card" => $card
                 ]
-            ]);
+            ]);}
+            else{
+                return response()->json([
+                    "state" => false,
+                    
+                ]); 
+            }
         } catch (Exception $e) {
             return response()->json([
                 "state" => false,
@@ -164,6 +171,6 @@ picId*/
                 "cardId" => $prodect["id"]
             ]);
         }
-        return $prodect;
+        return response()->json(["state"=>true],200);
     }
 }
