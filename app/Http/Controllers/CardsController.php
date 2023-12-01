@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Cards;
+use App\Models\Files;
 use App\Models\Users;
 use Exception;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+
 //use Validator;
 class CardsController extends Controller
 {
@@ -76,18 +80,18 @@ picId*/
             $card = Cards::where('userId', $userId)->where('passcode', $request->passcode)->first([
                 'name', 'passcode', 'picId', 'gender', 'birthDate', 'blood', 'location', 'phone'
             ]);
-            if($card!=null)
-            {return response()->json([
-                "state" => true,
-                "data" => [
-                    "card" => $card
-                ]
-            ]);}
-            else{
+            if ($card != null) {
+                return response()->json([
+                    "state" => true,
+                    "data" => [
+                        "card" => $card
+                    ]
+                ]);
+            } else {
                 return response()->json([
                     "state" => false,
-                    
-                ]); 
+
+                ]);
             }
         } catch (Exception $e) {
             return response()->json([
@@ -148,10 +152,6 @@ picId*/
             "location" => "required",
             "typeCard" => "required",
             "blood" => "required",
-            //    "userID" => Auth::id()
-
-            //typeCard	name	birthDate	gender	location	blood	phone	passcode	macAddress	picId
-
         ]);
 
         $prodect = Cards::create([
@@ -166,11 +166,28 @@ picId*/
             "userID" => Auth::id()
 
         ]);
+
+        $file = $request->file('cardPic');
+        $filePath = time() . $file->getClientOriginalName();
+        $fileType = $request->path->getClientMimeType();
+        Storage::disk('public')->put($filePath, File::get($file));
+        $f = Files::create([
+            'cardId' => $prodect['id'],
+            'filePath' => $filePath,
+            'fileType' => $fileType,
+            'fileName' => 'presonalPic',
+            'drugSens' => false
+        ]);
+
+        Cards::where('id', $prodect['id'])->update([
+            'picId' => $f['id']
+        ]);
+
         if (Auth::user()['cardId'] == null) {
             Users::where('id', Auth::id())->update([
                 "cardId" => $prodect["id"]
             ]);
         }
-        return response()->json(["state"=>true],200);
+        return response()->json(["state" => true], 200);
     }
 }
