@@ -143,7 +143,8 @@ picId*/
 
     public function addCard(Request $request)
     {
-        try{$create = $request->all();
+        try {
+            $create = $request->all();
             $validator = $request->validate([
                 "name" => "required",
                 "birthDate" => "required",
@@ -153,45 +154,44 @@ picId*/
                 "typeCard" => "required",
                 "blood" => "required",
             ]);
-            
-        $prodect = Cards::create([
-            "name" => $create["name"],
-            "birthDate" => $create["birthDate"],
-            "gender" => $create["gender"],
-            "phone" => $create["phone"],
-            "location" => $create["location"],
-            "typeCard" => $create["typeCard"],
-            "blood" => $request->blood,
-            "passcode" => $create["typeCard"] == 'nfc' ? rand(1000000000, 9999999999) : null,
-            "userID" => Auth::id()
-            
-        ]);
-        
-        $file = $request->file('cardPic');
-        $filePath = time() . $file->getClientOriginalName();
-        $fileType = File::type($file);
-        //return 1;
-        Storage::disk('public')->put($filePath, File::get($file));
-        $f = Files::create([
-            'cardId' => $prodect['id'],
-            'filePath' => $filePath,
-            'fileType' => $fileType,
-            'fileName' => 'presonalPic',
-            'drugSens' => false
-        ]);
 
-        Cards::where('id', $prodect['id'])->update([
-            'picId' => $f['id']
-        ]);
+            $prodect = Cards::create([
+                "name" => $create["name"],
+                "birthDate" => $create["birthDate"],
+                "gender" => $create["gender"],
+                "phone" => $create["phone"],
+                "location" => $create["location"],
+                "typeCard" => $create["typeCard"],
+                "blood" => $request->blood,
+                "passcode" => $create["typeCard"] == 'nfc' ? rand(1000000000, 9999999999) : null,
+                "userID" => Auth::id()
 
-        if (Auth::user()['cardId'] == null) {
-            Users::where('id', Auth::id())->update([
-                "cardId" => $prodect["id"]
             ]);
-        }
-        return response()->json(["state" => true], 200);
-    }
-        catch (Exception $e) {
+
+            $file = $request->file('cardPic');
+            $filePath = time() . $file->getClientOriginalName();
+            $fileType = $file->guessClientExtension();
+            //return 1;
+            Storage::disk('public')->put($filePath, File::get($file));
+            $f = Files::create([
+                'cardId' => $prodect['id'],
+                'filePath' => $filePath,
+                'fileType' => $fileType,
+                'fileName' => 'presonalPic',
+                'drugSens' => false
+            ]);
+
+            Cards::where('id', $prodect['id'])->update([
+                'picId' => $f['id']
+            ]);
+
+            if (Auth::user()['cardId'] == null) {
+                Users::where('id', Auth::id())->update([
+                    "cardId" => $prodect["id"]
+                ]);
+            }
+            return response()->json(["state" => true], 200);
+        } catch (Exception $e) {
             return response()->json([
                 "state" => false,
                 "data" => $e->getMessage()
