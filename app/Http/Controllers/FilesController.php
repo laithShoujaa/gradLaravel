@@ -12,14 +12,14 @@ use Illuminate\Support\Facades\Storage;
 
 class FilesController extends Controller
 {
-  public function getFile($id)
+  public function getFile( $id)
   {
     try {
-
+      
       $file = Files::where('id', $id)->first();
       if ($file != null) {
         $responseFile = Storage::disk('public')->get($file['filePath']);
-        return (new Response($responseFile, 200))->header('Content-Type', $file['fileType']) == null ? response()->json(['state'=>false]) : (new Response($responseFile, 200))->header('Content-Type', $file['fileType']);
+        return (new Response($responseFile, 200))->header('Content-Type', $file['fileType']);
       }
     } catch (Exception $e) {
       return response()->json([
