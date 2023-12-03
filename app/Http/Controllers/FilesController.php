@@ -12,13 +12,11 @@ use Illuminate\Support\Facades\Storage;
 
 class FilesController extends Controller
 {
-  public function getFile(Request $request)
+  public function getFile( $id)
   {
     try {
-      $request->validate([
-        'id' => 'required'
-      ]);
-      $file = Files::where('id', $request['id'])->first();
+      
+      $file = Files::where('id', $id)->first();
       if ($file != null) {
         $responseFile = Storage::disk('public')->get($file['filePath']);
         return (new Response($responseFile, 200))->header('Content-Type', $file['fileType']);
@@ -59,7 +57,7 @@ class FilesController extends Controller
     try {
       $request->validate([
         'passcode' => 'required',
-        'userId' => 'required'
+
       ]);
       $data = Files::where('userId', $request->userId)
         ->where('passcode', $request->passcode)
