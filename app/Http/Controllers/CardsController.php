@@ -143,17 +143,17 @@ picId*/
 
     public function addCard(Request $request)
     {
-        $create = $request->all();
-        $validator = $request->validate([
-            "name" => "required",
-            "birthDate" => "required",
-            "gender" => "required",
-            "phone" => "required",
-            "location" => "required",
-            "typeCard" => "required",
-            "blood" => "required",
-        ]);
-
+        try{$create = $request->all();
+            $validator = $request->validate([
+                "name" => "required",
+                "birthDate" => "required",
+                "gender" => "required",
+                "phone" => "required",
+                "location" => "required",
+                "typeCard" => "required",
+                "blood" => "required",
+            ]);
+            
         $prodect = Cards::create([
             "name" => $create["name"],
             "birthDate" => $create["birthDate"],
@@ -164,12 +164,13 @@ picId*/
             "blood" => $request->blood,
             "passcode" => $create["typeCard"] == 'nfc' ? rand(1000000000, 9999999999) : null,
             "userID" => Auth::id()
-
+            
         ]);
-
+        
         $file = $request->file('cardPic');
         $filePath = time() . $file->getClientOriginalName();
-        $fileType = $request->path->getClientMimeType();
+        $fileType = File::type($file);
+        //return 1;
         Storage::disk('public')->put($filePath, File::get($file));
         $f = Files::create([
             'cardId' => $prodect['id'],
@@ -189,5 +190,12 @@ picId*/
             ]);
         }
         return response()->json(["state" => true], 200);
+    }
+        catch (Exception $e) {
+            return response()->json([
+                "state" => false,
+                "data" => $e->getMessage()
+            ]);
+        }
     }
 }
