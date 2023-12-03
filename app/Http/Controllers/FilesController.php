@@ -19,7 +19,7 @@ class FilesController extends Controller
       $file = Files::where('id', $id)->first();
       if ($file != null) {
         $responseFile = Storage::disk('public')->get($file['filePath']);
-        return $responseFile == null ? null : (new Response($responseFile, 200))->header('Content-Type', $file['fileType']);
+        return $responseFile == null ? response()->json(['state'=>false]) : (new Response($responseFile, 200))->header('Content-Type', $file['fileType']);
       }
     } catch (Exception $e) {
       return response()->json([
