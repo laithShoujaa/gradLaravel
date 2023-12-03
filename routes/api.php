@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CardsController;
+use App\Http\Controllers\FilesController;
 use App\Http\Controllers\UsersController;
 use App\Models\Users;
 use Illuminate\Http\Request;
@@ -35,3 +36,4 @@ Route::get('/userDetails', [UsersController::class, 'userDetails'])->middleware(
 Route::get('/usersCards', [CardsController::class, 'usersCards'])->middleware('auth:sanctum');
 Route::get('/counts', [CardsController::class, 'counts'])->middleware('auth:sanctum');
 Route::get('/profile', [CardsController::class, 'userCard'])->middleware('auth:sanctum');
+Route::get('/getFile', [FilesController::class, 'getFile']);

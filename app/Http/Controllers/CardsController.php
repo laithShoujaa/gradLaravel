@@ -40,23 +40,6 @@ class CardsController extends Controller
     {
         try {
             $user = Auth::user();
-            /*
-نصوص كاملة
-id
-created_at
-updated_at
-deleted_at
-userID
-typeCard
-name
-birthDate
-gender
-location
-blood
-phone
-passcode
-macAddress
-picId*/
             $cards = Cards::where('userID', $user['id'])->where('typeCard', 'nfc')->get(['name', 'passcode', 'picId']);
             return response()->json([
                 "state" => true,
@@ -105,25 +88,7 @@ picId*/
     {
         try {
             $user = Auth::user();
-            /*
-نصوص كاملة
-id
-created_at
-updated_at
-deleted_at
-userID
-typeCard
-name
-birthDate
-gender
-location
-blood
-phone
-passcode
-macAddress
-picId*/
             $id = $user["cardId"];
-
             $cards = Cards::where('id', $id)->where('typeCard', 'nfc')->first([
                 'name', 'passcode', 'picId', 'gender', 'birthDate', 'blood', 'location', 'phone'
             ]);
