@@ -26,7 +26,8 @@ class UsersController extends Controller
                 "data" => [
                     "name" => $card["name"],
                     "passCode" => $card["passcode"],
-                    "userID" => $user["userID"]
+                    "userID" => $user["userID"],
+                    "picId" => $card["picId"]
                 ]
             ], 200);
         } catch (Exception $e) {
