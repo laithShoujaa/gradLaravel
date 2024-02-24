@@ -173,8 +173,8 @@ class CardsController extends Controller
                 'passcode' => 'required',
                 'gender' => 'required',
                 'phone' => 'required',
-                'birthDay' => 'required',
-                'bloodType' => 'required',
+                'birthDate' => 'required',
+                'blood' => 'required',
                 'location' => 'required'
             ]);
             $newCard = Cards::where('userID', $id)->where('passcode', $request['passcode'])->update([
@@ -182,8 +182,8 @@ class CardsController extends Controller
                 'passcode' => $request['passcode'],
                 'gender' => $request['gender'],
                 'phone' => $request['phone'],
-                'birthDay' => $request['birthDay'],
-                'bloodType' => $request['bloodType'],
+                'birthDate' => $request['birthDate'],
+                'blood' => $request['blood'],
                 'location' => $request['location']
             ]);
             return response()->json([
