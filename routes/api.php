@@ -30,7 +30,7 @@ Route::post('/register', [UsersController::class, 'register']);
 Route::post('/login', [UsersController::class, 'login']);
 Route::post('/verify', [UsersController::class, 'verify']);
 Route::post('/cardData', [CardsController::class, 'cardData']);
-Route::post('/editCard', [CardsController::class, 'cardEdit'])->middleware('auth:sanctum');
+Route::post('/editCard', [CardsController::class, 'editCard'])->middleware('auth:sanctum');
 Route::post('/getCardFile', [FilesController::class, 'getCardFile']);
 Route::post('/getCardDrugSens', [FilesController::class, 'getCardDrugSens']);
 Route::post('/logout', [UsersController::class, 'logout'])->middleware('auth:sanctum');
