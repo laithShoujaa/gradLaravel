@@ -188,7 +188,9 @@ class CardsController extends Controller
 
             return response()->json([
                 'state' => true,
-                'data' => Cards::where('userID', $id)->where('passcode', $request['passcode'])->first()
+                'data' => Cards::where('userId', $id)->where('passcode', $request->passcode)->first([
+                    'name', 'passcode', 'picId', 'gender', 'birthDate', 'blood', 'location', 'phone'
+                ])
             ]);
         } catch (Exception $e) {
             return response()->json([
