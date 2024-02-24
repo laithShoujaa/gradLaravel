@@ -169,6 +169,7 @@ class CardsController extends Controller
         try {
             $id = Auth::id();
             $request->validate([
+                'name' => 'required',
                 'passcode' => 'required',
                 'gender' => 'required',
                 'phone' => 'required',
@@ -177,6 +178,7 @@ class CardsController extends Controller
                 'location' => 'required'
             ]);
             $newCard = Cards::where('userID', $id)->where('passcode', $request['passcode'])->update([
+                'name' => $request['name'],
                 'passcode' => $request['passcode'],
                 'gender' => $request['gender'],
                 'phone' => $request['phone'],
@@ -185,8 +187,8 @@ class CardsController extends Controller
                 'location' => $request['location']
             ]);
             return response()->json([
-                'state'=>true,
-                'data'=>$newCard
+                'state' => true,
+                'data' => $newCard
             ]);
         } catch (Exception $e) {
             return response()->json([
