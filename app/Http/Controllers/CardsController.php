@@ -179,16 +179,16 @@ class CardsController extends Controller
             ]);
             $newCard = Cards::where('userID', $id)->where('passcode', $request['passcode'])->update([
                 'name' => $request['name'],
-                'passcode' => $request['passcode'],
                 'gender' => $request['gender'],
                 'phone' => $request['phone'],
                 'birthDate' => $request['birthDate'],
                 'blood' => $request['blood'],
                 'location' => $request['location']
             ]);
+
             return response()->json([
                 'state' => true,
-                'data' => $newCard
+                'data' => Cards::where('userID', $id)->where('passcode', $request['passcode'])->first()
             ]);
         } catch (Exception $e) {
             return response()->json([
