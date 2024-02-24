@@ -163,4 +163,36 @@ class CardsController extends Controller
             ]);
         }
     }
+
+    public function editCard(Request $request)
+    {
+        try {
+            $id = Auth::id();
+            $request->validate([
+                'passcode' => 'required',
+                'gender' => 'required',
+                'phone' => 'required',
+                'birthDay' => 'required',
+                'bloodType' => 'required',
+                'location' => 'required'
+            ]);
+            $newCard = Cards::where('userID', $id)->where('passcode', $request['passcode'])->update([
+                'passcode' => $request['passcode'],
+                'gender' => $request['gender'],
+                'phone' => $request['phone'],
+                'birthDay' => $request['birthDay'],
+                'bloodType' => $request['bloodType'],
+                'location' => $request['location']
+            ]);
+            return response()->json([
+                'state'=>true,
+                'data'=>$newCard
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                "state" => false,
+                "data" => $e->getMessage()
+            ]);
+        }
+    }
 }
