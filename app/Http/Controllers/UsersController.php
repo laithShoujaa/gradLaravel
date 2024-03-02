@@ -65,6 +65,7 @@ class UsersController extends Controller
                 $verf *= 10;
                 $verf += random_int(1, 9);
             }
+            $verf="0000";
             $data = array('name' => $verf);
             $email = $request->email;
 
