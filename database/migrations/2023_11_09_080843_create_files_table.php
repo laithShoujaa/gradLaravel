@@ -17,7 +17,7 @@ class CreateFilesTable extends Migration {
 			$table->string('fileType')->nullable();
 			$table->string('detail')->nullable();
 			$table->string('fileName')->nullable();
-			$table->boolean('drugSens');
+			$table->enum('type',['personal','drug','ill','report']);
 		});
 	}
 

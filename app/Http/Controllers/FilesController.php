@@ -30,6 +30,44 @@ class FilesController extends Controller
     }
   }
 
+  public function editPhoto(Request $request) {
+    try {
+      $request->validate([
+        'passcode' => 'required',
+        'detail' => 'required',
+        'fileName' => 'required'
+      ]);
+
+      $cardId = Cards::where('passcode', $request['passcode'])->where('userId', Auth::id())->value('id');
+      if ($cardId != null) {
+        if ($request->file('file') != null) {
+          $file = $request->file('file');
+          $filePath = time() . $file->getClientOriginalName();
+          $fileType = $file->guessClientExtension();
+          //return 1;
+          Storage::disk('public')->put($filePath, File::get($file));
+          $f = Files::create([
+            'cardId' => $cardId,
+            'filePath' => $filePath,
+            'fileType' => $fileType,
+            'detail'=>$request['detaile'],
+            'fileName' => $request['fileName'],
+            'drugSens' => false
+          ]);
+          Cards::where('id',$cardId)->update(['picId'=>$f['id']]);
+          return response()->json([
+            'state' => true,
+          ]);
+        }
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        "state" => false,
+        "data" => $e->getMessage()
+      ]);
+    }
+  }
+
   public function getCardFile(Request $request)
   {
     try {
