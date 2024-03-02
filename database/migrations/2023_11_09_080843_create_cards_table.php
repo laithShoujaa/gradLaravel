@@ -16,7 +16,7 @@ class CreateCardsTable extends Migration {
 			$table->enum('typeCard', array('nfc', 'smartHome'));
 			$table->string('name');
 			$table->date('birthDate')->nullable();
-			$table->enum('gender', array('male', 'female'))->nullable();
+			$table->enum('gender', array('Male', 'Female'))->nullable();
 			$table->string('location')->nullable();
             $table->enum('blood',['AB+','AB-','A+','A-','B+','B-','O+','O-'])->nullable();
 			$table->string('phone')->nullable();
