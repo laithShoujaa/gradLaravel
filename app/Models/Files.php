@@ -14,6 +14,6 @@ class Files extends Model
     use SoftDeletes;
 
     protected $dates = ['deleted_at'];
-    protected $fillable = array('cardId', 'filePath', 'fileType', 'detail', 'fileName', 'drugSens');
+    protected $fillable = array('cardId', 'filePath', 'fileType', 'detail', 'fileName', 'type');
 
 }

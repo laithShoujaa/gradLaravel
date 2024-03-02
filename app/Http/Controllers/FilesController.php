@@ -52,7 +52,7 @@ class FilesController extends Controller
             'fileType' => $fileType,
             'detail'=>$request['detaile'],
             'fileName' => $request['fileName'],
-            'drugSens' => false
+            'type' => false
           ]);
           Cards::where('id',$cardId)->update(['picId'=>$f['id']]);
           return response()->json([
@@ -77,7 +77,7 @@ class FilesController extends Controller
       ]);
       $data = Files::where('userId', $request->userId)
         ->where('passcode', $request->passcode)
-        ->where('drugSens', false)
+        ->where('type', false)
         ->first(['id', 'detail', 'fileName', 'fileType']);
       return response()->json([
         'state' => true,
@@ -114,7 +114,7 @@ class FilesController extends Controller
             'fileType' => $fileType,
             'detail'=>$request['detaile'],
             'fileName' => $request['fileName'],
-            'drugSens' => false
+            'type' => false
           ]);
           return response()->json([
             'state' => true,
@@ -125,7 +125,7 @@ class FilesController extends Controller
             'cardId' => $cardId,
             'detail'=>$request['detaile'],
             'fileName' => $request['fileName'],
-            'drugSens' => false
+            'type' => false
           ]);
           return response()->json([
             'state' => true,
@@ -166,7 +166,7 @@ class FilesController extends Controller
             'fileType' => $fileType,
             'detail'=>$request['detaile'],
             'fileName' => $request['fileName'],
-            'drugSens' => true
+            'type' => true
           ]);
           return response()->json([
             'state' => true,
@@ -177,7 +177,7 @@ class FilesController extends Controller
             'cardId' => $cardId,
             'detail'=>$request['detaile'],
             'fileName' => $request['fileName'],
-            'drugSens' => true
+            'type' => true
           ]);
           return response()->json([
             'state' => true,
@@ -204,7 +204,7 @@ class FilesController extends Controller
       ]);
       $data = Files::where('userId', $request->userId)
         ->where('passcode', $request->passcode)
-        ->where('drugSens', true)
+        ->where('type', true)
         ->first(['id', 'detail', 'fileName']);
       return response()->json([
         'state' => true,

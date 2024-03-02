@@ -34,6 +34,11 @@ class CreateForeignKeys extends Migration {
 						->onDelete('cascade')
 						->onUpdate('restrict');
 		});
+		Schema::table('access', function(Blueprint $table) {
+			$table->foreign('cardId')->references('id')->on('cards')
+						->onDelete('cascade')
+						->onUpdate('restrict');
+		});
 	}
 
 	public function down()
@@ -52,6 +57,9 @@ class CreateForeignKeys extends Migration {
 		});
 		Schema::table('files', function(Blueprint $table) {
 			$table->dropForeign('files_cardId_foreign');
+		});
+		Schema::table('users', function(Blueprint $table) {
+			$table->dropForeign('access_cardId_foreign');
 		});
 	}
 }
