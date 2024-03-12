@@ -30,12 +30,11 @@ class FilesController extends Controller
     }
   }
 
-  public function editPhoto(Request $request) {
+  public function editPhoto(Request $request)
+  {
     try {
       $request->validate([
         'passcode' => 'required',
-        'detail' => 'required',
-        'fileName' => 'required'
       ]);
 
       $cardId = Cards::where('passcode', $request['passcode'])->where('userId', Auth::id())->value('id');
@@ -50,11 +49,9 @@ class FilesController extends Controller
             'cardId' => $cardId,
             'filePath' => $filePath,
             'fileType' => $fileType,
-            'detail'=>$request['detaile'],
-            'fileName' => $request['fileName'],
-            'type' => false
+            'type' => 'personal'
           ]);
-          Cards::where('id',$cardId)->update(['picId'=>$f['id']]);
+          Cards::where('id', $cardId)->update(['picId' => $f['id']]);
           return response()->json([
             'state' => true,
           ]);
@@ -77,8 +74,8 @@ class FilesController extends Controller
       ]);
       $data = Files::where('userId', $request->userId)
         ->where('passcode', $request->passcode)
-        ->where('type', false)
-        ->first(['id', 'detail', 'fileName', 'fileType']);
+        ->where('type', 'presonal')
+        ->first('id');
       return response()->json([
         'state' => true,
         'data' => $data
@@ -96,12 +93,26 @@ class FilesController extends Controller
     try {
       $request->validate([
         'passcode' => 'required',
-        'detail' => 'required',
-        'fileName' => 'required'
+        'fileName' => 'required',
+        'type' => 'required'
       ]);
-
       $cardId = Cards::where('passcode', $request['passcode'])->where('userId', Auth::id())->value('id');
-      if ($cardId != null) {
+      if ($cardId == null) {
+        return response()->json([
+          'state' => false,
+        ]);
+      }
+      if ($request['type'] == 'drug' || $request['type'] == 'ill') {
+        $f = Files::create([
+          'cardId' => $cardId,
+          'detail' => $request['detaile'],
+          'fileName' => $request['fileName'],
+          'type' => $request['type']
+        ]);
+        return response()->json([
+          'state' => true,
+        ]);
+      } else {
         if ($request->file('file') != null) {
           $file = $request->file('file');
           $filePath = time() . $file->getClientOriginalName();
@@ -112,81 +123,25 @@ class FilesController extends Controller
             'cardId' => $cardId,
             'filePath' => $filePath,
             'fileType' => $fileType,
-            'detail'=>$request['detaile'],
+            'detail' => $request['detaile'],
             'fileName' => $request['fileName'],
-            'type' => false
+            'type' => $request['type']
           ]);
           return response()->json([
             'state' => true,
           ]);
-        }
-        else{
+        } else {
           $f = Files::create([
             'cardId' => $cardId,
-            'detail'=>$request['detaile'],
+            'detail' => $request['detaile'],
             'fileName' => $request['fileName'],
-            'type' => false
+            'type' => $request['type']
           ]);
           return response()->json([
             'state' => true,
           ]);
         }
       }
-      return response()->json([
-        'state' => false,
-      ]);
-    } catch (Exception $e) {
-      return response()->json([
-        "state" => false,
-        "data" => $e->getMessage()
-      ]);
-    }
-  }
-
-  public function addDrugSens(Request $request)
-  {
-    try {
-      $request->validate([
-        'passcode' => 'required',
-        'detail' => 'required',
-        'fileName' => 'required'
-      ]);
-
-      $cardId = Cards::where('passcode', $request['passcode'])->where('userId', Auth::id())->value('id');
-      if ($cardId != null) {
-        if ($request->file('file') != null) {
-          $file = $request->file('file');
-          $filePath = time() . $file->getClientOriginalName();
-          $fileType = $file->guessClientExtension();
-          //return 1;
-          Storage::disk('public')->put($filePath, File::get($file));
-          $f = Files::create([
-            'cardId' => $cardId,
-            'filePath' => $filePath,
-            'fileType' => $fileType,
-            'detail'=>$request['detaile'],
-            'fileName' => $request['fileName'],
-            'type' => true
-          ]);
-          return response()->json([
-            'state' => true,
-          ]);
-        }
-        else{
-          $f = Files::create([
-            'cardId' => $cardId,
-            'detail'=>$request['detaile'],
-            'fileName' => $request['fileName'],
-            'type' => true
-          ]);
-          return response()->json([
-            'state' => true,
-          ]);
-        }
-      }
-      return response()->json([
-        'state' => false,
-      ]);
     } catch (Exception $e) {
       return response()->json([
         "state" => false,
@@ -204,7 +159,7 @@ class FilesController extends Controller
       ]);
       $data = Files::where('userId', $request->userId)
         ->where('passcode', $request->passcode)
-        ->where('type', true)
+        ->where('type', 'drug')
         ->first(['id', 'detail', 'fileName']);
       return response()->json([
         'state' => true,

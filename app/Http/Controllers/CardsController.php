@@ -142,8 +142,7 @@ class CardsController extends Controller
                 'cardId' => $prodect['id'],
                 'filePath' => $filePath,
                 'fileType' => $fileType,
-                'fileName' => 'presonalPic',
-                'drugSens' => false
+                'type' => 'personal'
             ]);
 
             Cards::where('id', $prodect['id'])->update([
