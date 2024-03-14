@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\cardFiles;
 use App\Models\Cards;
 use App\Models\Files;
+use App\Models\Users;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -163,7 +164,8 @@ class FilesController extends Controller
         'userId' => 'required',
         'type' => 'required'
       ]);
-      $cardId = Cards::where('userId', $request->userId)
+      $userId=Users::where('userID', $request->userId)->value('id');
+      $cardId = Cards::where('userId',$userId)
         ->where('passcode', $request->passcode)
         ->value('id');
       if ($cardId == null) {
