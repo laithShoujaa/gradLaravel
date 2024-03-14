@@ -100,6 +100,7 @@ class FilesController extends Controller
       $request->validate([
         'passcode' => 'required',
         'fileName' => 'required',
+        'detail' => 'required',
         'type' => 'required'
       ]);
       $cardId = Cards::where('passcode', $request['passcode'])->where('userId', Auth::id())->value('id');
@@ -164,14 +165,14 @@ class FilesController extends Controller
         'userId' => 'required',
         'type' => 'required'
       ]);
-      $userId=Users::where('userID', $request->userId)->value('id');
-      if($userId==null){
+      $userId = Users::where('userID', $request->userId)->value('id');
+      if ($userId == null) {
         return response()->json([
           "state" => false,
           "data" => "no user found"
         ]);
       }
-      $cardId = Cards::where('userId',$userId)
+      $cardId = Cards::where('userId', $userId)
         ->where('passcode', $request->passcode)
         ->value('id');
       if ($cardId == null) {
