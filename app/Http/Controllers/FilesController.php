@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\cardFiles;
 use App\Models\Cards;
 use App\Models\Files;
 use Exception;
@@ -56,12 +57,16 @@ class FilesController extends Controller
             'state' => true,
           ]);
         }
+        Cards::where('id', $cardId)->update(['picId' => null]);
+          return response()->json([
+            'state' => true,
+          ]);
       }
     } catch (Exception $e) {
       return response()->json([
         "state" => false,
         "data" => $e->getMessage()
-      ]);
+      ],500);
     }
   }
 
@@ -150,17 +155,18 @@ class FilesController extends Controller
     }
   }
 
-  public function getCardDrugSens(Request $request)
+  public function getCardFiles(Request $request)
   {
     try {
       $request->validate([
         'passcode' => 'required',
-        'userId' => 'required'
+        'userId' => 'required',
+        'type'=>'required'
       ]);
-      $data = Files::where('userId', $request->userId)
+      $data = cardFiles::where('userId', $request->userId)
         ->where('passcode', $request->passcode)
-        ->where('type', 'drug')
-        ->first(['id', 'detail', 'fileName']);
+        ->where('type', $request['type'])
+        ->get();
       return response()->json([
         'state' => true,
         'data' => $data
