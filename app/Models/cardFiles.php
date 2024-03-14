@@ -11,7 +11,7 @@ class cardFiles extends Model
     public $timestamps = true;
 
     protected $dates = ['deleted_at'];
-    protected $hidden = array('cardId', 'filePath', 'fileType', 'type');
+    protected $hidden = array('cardId', 'filePath', 'fileType', 'type','created_at','updated_at','deleted_at');
     protected $fillable=['detail', 'fileName'];
     protected $appends=['hasImage'];
     public function getHasImageAttribute()  {
