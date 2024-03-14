@@ -132,22 +132,23 @@ class CardsController extends Controller
                 "userID" => Auth::id()
 
             ]);
+            if ($request['cardPic'] != null) {
+                $file = $request->file('cardPic');
+                $filePath = time() . $file->getClientOriginalName();
+                $fileType = $file->guessClientExtension();
+                //return 1;
+                Storage::disk('public')->put($filePath, File::get($file));
+                $f = Files::create([
+                    'cardId' => $prodect['id'],
+                    'filePath' => $filePath,
+                    'fileType' => $fileType,
+                    'type' => 'personal'
+                ]);
 
-            $file = $request->file('cardPic');
-            $filePath = time() . $file->getClientOriginalName();
-            $fileType = $file->guessClientExtension();
-            //return 1;
-            Storage::disk('public')->put($filePath, File::get($file));
-            $f = Files::create([
-                'cardId' => $prodect['id'],
-                'filePath' => $filePath,
-                'fileType' => $fileType,
-                'type' => 'personal'
-            ]);
-
-            Cards::where('id', $prodect['id'])->update([
-                'picId' => $f['id']
-            ]);
+                Cards::where('id', $prodect['id'])->update([
+                    'picId' => $f['id']
+                ]);
+            }
 
             if (Auth::user()['cardId'] == null) {
                 Users::where('id', Auth::id())->update([
