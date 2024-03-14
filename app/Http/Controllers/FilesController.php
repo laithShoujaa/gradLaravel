@@ -165,6 +165,12 @@ class FilesController extends Controller
         'type' => 'required'
       ]);
       $userId=Users::where('userID', $request->userId)->value('id');
+      if($userId==null){
+        return response()->json([
+          "state" => false,
+          "data" => "no user found"
+        ]);
+      }
       $cardId = Cards::where('userId',$userId)
         ->where('passcode', $request->passcode)
         ->value('id');
