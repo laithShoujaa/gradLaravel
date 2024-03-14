@@ -58,15 +58,15 @@ class FilesController extends Controller
           ]);
         }
         Cards::where('id', $cardId)->update(['picId' => null]);
-          return response()->json([
-            'state' => true,
-          ]);
+        return response()->json([
+          'state' => true,
+        ]);
       }
     } catch (Exception $e) {
       return response()->json([
         "state" => false,
         "data" => $e->getMessage()
-      ],500);
+      ], 500);
     }
   }
 
@@ -161,10 +161,18 @@ class FilesController extends Controller
       $request->validate([
         'passcode' => 'required',
         'userId' => 'required',
-        'type'=>'required'
+        'type' => 'required'
       ]);
-      $data = cardFiles::where('userId', $request->userId)
+      $cardId = Cards::where('userId', $request->userId)
         ->where('passcode', $request->passcode)
+        ->value('id');
+      if ($cardId == null) {
+        return response()->json([
+          "state" => false,
+          "data" => "no card found"
+        ]);
+      }
+      $data = cardFiles::where('cardId', $cardId)
         ->where('type', $request['type'])
         ->get();
       return response()->json([
