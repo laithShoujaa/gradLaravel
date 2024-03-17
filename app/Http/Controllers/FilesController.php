@@ -56,11 +56,13 @@ class FilesController extends Controller
           Cards::where('id', $cardId)->update(['picId' => $f['id']]);
           return response()->json([
             'state' => true,
+            "data"=> $f['id']
           ]);
         }
         Cards::where('id', $cardId)->update(['picId' => null]);
         return response()->json([
           'state' => true,
+          "data"=>null
         ]);
       }
     } catch (Exception $e) {
@@ -112,7 +114,7 @@ class FilesController extends Controller
       if ($request['type'] == 'drug' || $request['type'] == 'ill') {
         $f = Files::create([
           'cardId' => $cardId,
-          'detail' => $request['detaile'],
+          'detail' => $request['detail'],
           'fileName' => $request['fileName'],
           'type' => $request['type']
         ]);
@@ -130,7 +132,7 @@ class FilesController extends Controller
             'cardId' => $cardId,
             'filePath' => $filePath,
             'fileType' => $fileType,
-            'detail' => $request['detaile'],
+            'detail' => $request['detail'],
             'fileName' => $request['fileName'],
             'type' => $request['type']
           ]);
@@ -140,7 +142,7 @@ class FilesController extends Controller
         } else {
           $f = Files::create([
             'cardId' => $cardId,
-            'detail' => $request['detaile'],
+            'detail' => $request['detail'],
             'fileName' => $request['fileName'],
             'type' => $request['type']
           ]);
