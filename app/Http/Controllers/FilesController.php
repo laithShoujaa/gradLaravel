@@ -71,28 +71,6 @@ class FilesController extends Controller
     }
   }
 
-  public function getCardFile(Request $request)
-  {
-    try {
-      $request->validate([
-        'passcode' => 'required',
-        'userId' => 'required'
-      ]);
-      $data = Files::where('userId', $request->userId)
-        ->where('passcode', $request->passcode)
-        ->where('type', 'presonal')
-        ->first('id');
-      return response()->json([
-        'state' => true,
-        'data' => $data
-      ]);
-    } catch (Exception $e) {
-      return response()->json([
-        "state" => false,
-        "data" => $e->getMessage()
-      ]);
-    }
-  }
 
   public function addCardFile(Request $request)
   {

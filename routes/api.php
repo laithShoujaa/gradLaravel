@@ -41,7 +41,6 @@ Route::get('/counts', [CardsController::class, 'counts'])->middleware('auth:sanc
 Route::get('/profile', [CardsController::class, 'userCard'])->middleware('auth:sanctum');
 /**files */
 Route::post('/editPhoto', [FilesController::class, 'editPhoto'])->middleware('auth:sanctum');
-Route::post('/getCardFile', [FilesController::class, 'getCardFile']);
 Route::post('/getCardFiles', [FilesController::class, 'getCardFiles']);
 Route::post('/addCardFile', [FilesController::class, 'addCardFile'])->middleware('auth:sanctum');
 Route::get('/getFile/{id}', [FilesController::class, 'getFile']);
