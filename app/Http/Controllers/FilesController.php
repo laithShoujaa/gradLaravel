@@ -125,7 +125,7 @@ class FilesController extends Controller
         if ($request->file('file') != null) {
           $file = $request->file('file');
           $filePath = time() . $file->getClientOriginalName();
-          $fileType = $file->guessClientExtension();
+          $fileType = $file->guessExtension();
           //return 1;
           Storage::disk('public')->put($filePath, File::get($file));
           $f = Files::create([
