@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\Access;
 use App\Models\Cards;
 use App\Models\Files;
 use App\Models\Users;
 use Exception;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -16,6 +15,70 @@ use Illuminate\Support\Facades\Storage;
 //use Validator;
 class CardsController extends Controller
 {
+    public function moveCard(Request $request) {
+        try {
+            //code...
+        } catch (\Throwable $th) {
+            return response()->json([
+                "state" => false,
+                "data" => $th->getMessage()
+            ], 400);
+        }
+    }
+    public function cardSafeKey(Request $request) {
+        try {
+            $id=Auth::id();
+            $request->validate([
+                'passcode'=>'required',
+                'userId'=>'required'
+            ]);
+            $userId=($request['userId']-20)/100;
+            $cardId=Cards::where('userID',$userId)->where('passcode',$request['passcode'])->value('id');
+            if($cardId==null){
+                return response()->json([
+                    'state'=>false
+                ],404);
+            }
+            $safeKey=rand(1000,9999);
+            $s= Access::where('cardId',$cardId)->where('userId',$id)->value('safeKey');
+            if($s==null){
+                Access::
+            }
+        } catch (\Throwable $th) {
+            return response()->json([
+                "state" => false,
+                "data" => $th->getMessage()
+            ], 400);
+        }
+    }
+    public function setAsPrimary(Request $request)
+    {
+        try {
+            $id = Auth::id();
+            $request->validate([
+                'passcode' => 'required'
+            ]);
+            $cardId = Cards::where('userID', $id)
+                ->where('passcode', $request['passcode'])
+                ->value('id');
+            if ($cardId == null) {
+                return response()->json([
+                    "state" => false,
+                ], 404);
+            }
+            Users::where('id', $id)->update([
+                'cardId' => $cardId
+            ]);
+            return response()->json([
+                "state" => true
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "state" => false,
+                "data" => $th->getMessage()
+            ], 400);
+        }
+    }
     public function counts()
     {
         try {
@@ -191,6 +254,34 @@ class CardsController extends Controller
                 'data' => Cards::where('userId', $id)->where('passcode', $request->passcode)->first([
                     'name', 'passcode', 'picId', 'gender', 'birthDate', 'blood', 'location', 'phone'
                 ])
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                "state" => false,
+                "data" => $e->getMessage()
+            ]);
+        }
+    }
+    public function deleteCard(Request $request)
+    {
+        try {
+            $id = Auth::id();
+            $request->validate([
+                'passcode' => 'required'
+            ]);
+            $cardId = Cards::where('passcode', $request['passcode'])
+                ->where('userID', $id)
+                ->value('id');
+            $userCardId = Users::where('id', $id)->value('cardId');
+            if ($cardId == $userCardId) {
+                return response()->json([
+                    'state' => false,
+                    'data' => 'can not delete primary card'
+                ], 400);
+            }
+            Cards::where('id', $cardId)->delete();
+            return response()->json([
+                'state' => true
             ]);
         } catch (Exception $e) {
             return response()->json([

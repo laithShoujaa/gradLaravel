@@ -35,12 +35,21 @@ Route::get('/userDetails', [UsersController::class, 'userDetails'])->middleware(
 /**card */
 Route::post('/cardData', [CardsController::class, 'cardData']);
 Route::post('/editCard', [CardsController::class, 'editCard'])->middleware('auth:sanctum');
+Route::post('/deleteCard', [CardsController::class, 'deleteCard'])->middleware('auth:sanctum');
+//
+Route::post('/setAsPrimary', [CardsController::class, 'setAsPrimary'])->middleware('auth:sanctum');
+//
 Route::post('/addCard', [CardsController::class, 'addCard'])->middleware('auth:sanctum');
 Route::get('/usersCards', [CardsController::class, 'usersCards'])->middleware('auth:sanctum');
 Route::get('/counts', [CardsController::class, 'counts'])->middleware('auth:sanctum');
 Route::get('/profile', [CardsController::class, 'userCard'])->middleware('auth:sanctum');
 /**files */
 Route::post('/editPhoto', [FilesController::class, 'editPhoto'])->middleware('auth:sanctum');
+//
+Route::post('/editFilePhoto', [FilesController::class, 'editFilePhoto'])->middleware('auth:sanctum');
+Route::post('/editFile', [FilesController::class, 'editFile'])->middleware('auth:sanctum');
+Route::post('/deletecardFile', [FilesController::class, 'deletecardFile'])->middleware('auth:sanctum');
+//
 Route::post('/getCardFile', [FilesController::class, 'getCardFile']);
 Route::post('/getCardFiles', [FilesController::class, 'getCardFiles']);
 Route::post('/addCardFile', [FilesController::class, 'addCardFile'])->middleware('auth:sanctum');
