@@ -9,5 +9,5 @@ class Access extends Model
 {
     use HasFactory;
     protected $table = 'access';
-    protected $fillable = array('userID', 'email');
+    protected $fillable = array('userId', 'cardId','safeKey');
 }

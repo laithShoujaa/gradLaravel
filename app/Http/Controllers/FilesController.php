@@ -15,6 +15,78 @@ use Illuminate\Support\Facades\Storage;
 
 class FilesController extends Controller
 {
+
+  function editFile(Request $request)
+  {
+    try {
+      $id = Auth::id();
+      $request->validate([
+        'fileId' => 'required',
+        'name' => 'required',
+        'detail' => 'required'
+      ]);
+      $cardId = Files::where('id', $request['fileId'])->value('cardId');
+      if ($cardId == null) {
+        return response()->json([
+          'state' => false,
+          'data' => 'not found'
+        ], 404);
+      }
+      $userId = Cards::where('id', $cardId)->value('userID');
+      if ($id != $userId) {
+        return response()->json([
+          'state' => false,
+          'data' => 'access denied'
+        ], 403);
+      }
+      Files::where('id', $request['fileId'])->update([
+        'fileName' => $request['name'],
+        'detail' => $request['detail']
+      ]);
+      return response()->json([
+        'state' => true
+      ], 200);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'state' => false,
+        'data' => $th->getMessage()
+      ], 400);
+    }
+  }
+
+  function deletecardFile(Request $request)
+  {
+    try {
+      $id = Auth::id();
+      $request->validate([
+        'fileId' => 'required'
+      ]);
+      $cardId = Files::where('id', $request['fileId'])->value('cardId');
+      if ($cardId == null) {
+        return response()->json([
+          'state' => false,
+          'data' => 'not found'
+        ], 404);
+      }
+      $userId = Cards::where('id', $cardId)->value('userID');
+      if ($id != $userId) {
+        return response()->json([
+          'state' => false,
+          'data' => 'access denied'
+        ], 403);
+      }
+      Files::where('id', $request['fileId'])->delete();
+      return response()->json([
+        'state' => true
+      ], 200);
+    } catch (\Throwable $th) {
+      return response()->json([
+        'state' => false,
+        'data' => $th->getMessage()
+      ], 400);
+    }
+  }
+
   public function getFile($id)
   {
     try {
@@ -29,6 +101,56 @@ class FilesController extends Controller
         "state" => false,
         "data" => $e->getMessage()
       ]);
+    }
+  }
+
+  public function editFilePhoto(Request $request)
+  {
+    try {
+      $id = Auth::id();
+      $request->validate([
+        'fileId' => 'required'
+      ]);
+      $cardId = Files::where('id', $request['fileId'])->value('cardId');
+      if ($cardId == null) {
+        return response()->json([
+          'state' => false,
+          'data' => 'not found'
+        ], 404);
+      }
+      $userId = Cards::where('id', $cardId)->value('userID');
+      if ($id != $userId) {
+        return response()->json([
+          'state' => false,
+          'data' => 'access denied'
+        ], 403);
+      }
+      if ($request->file('file') != null) {
+        $file = $request->file('file');
+        $filePath = time() . $file->getClientOriginalName();
+        $fileType = $file->guessClientExtension();
+        //return 1;
+        Storage::disk('public')->put($filePath, File::get($file));
+        $f = Files::where('id', $request['fileId'])->update([
+          'filePath' => $filePath,
+          'fileType' => $fileType
+        ]);
+        return response()->json([
+          'state' => true
+        ]);
+      }
+      $f = Files::where('id', $request['fileId'])->update([
+        'filePath' => null,
+        'fileType' => null
+      ]);
+      return response()->json([
+        'state' => true,
+      ]);
+    } catch (Exception $e) {
+      return response()->json([
+        "state" => false,
+        "data" => $e->getMessage()
+      ], 500);
     }
   }
 
@@ -56,11 +178,13 @@ class FilesController extends Controller
           Cards::where('id', $cardId)->update(['picId' => $f['id']]);
           return response()->json([
             'state' => true,
+            "data" => $f['id']
           ]);
         }
         Cards::where('id', $cardId)->update(['picId' => null]);
         return response()->json([
           'state' => true,
+          "data" => null
         ]);
       }
     } catch (Exception $e) {
@@ -90,7 +214,7 @@ class FilesController extends Controller
       if ($request['type'] == 'drug' || $request['type'] == 'ill') {
         $f = Files::create([
           'cardId' => $cardId,
-          'detail' => $request['detaile'],
+          'detail' => $request['detail'],
           'fileName' => $request['fileName'],
           'type' => $request['type']
         ]);
@@ -101,14 +225,14 @@ class FilesController extends Controller
         if ($request->file('file') != null) {
           $file = $request->file('file');
           $filePath = time() . $file->getClientOriginalName();
-          $fileType = $file->guessClientExtension();
+          $fileType = $file->guessExtension();
           //return 1;
           Storage::disk('public')->put($filePath, File::get($file));
           $f = Files::create([
             'cardId' => $cardId,
             'filePath' => $filePath,
             'fileType' => $fileType,
-            'detail' => $request['detaile'],
+            'detail' => $request['detail'],
             'fileName' => $request['fileName'],
             'type' => $request['type']
           ]);
@@ -118,7 +242,7 @@ class FilesController extends Controller
         } else {
           $f = Files::create([
             'cardId' => $cardId,
-            'detail' => $request['detaile'],
+            'detail' => $request['detail'],
             'fileName' => $request['fileName'],
             'type' => $request['type']
           ]);
@@ -161,6 +285,7 @@ class FilesController extends Controller
       }
       $data = cardFiles::where('cardId', $cardId)
         ->where('type', $request['type'])
+        ->where('deleted_at',null)
         ->get();
       return response()->json([
         'state' => true,

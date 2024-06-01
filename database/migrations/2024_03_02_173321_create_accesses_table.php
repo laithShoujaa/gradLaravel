@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('access', function (Blueprint $table) {
-            $table->string('email');
+            $table->integer('userId')->unsigned();
+            $table->integer('safeKey');
             $table->integer('cardId')->unsigned();
         });
     }

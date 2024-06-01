@@ -11,10 +11,15 @@ class cardFiles extends Model
     public $timestamps = true;
 
     protected $dates = ['deleted_at'];
-    protected $hidden = array('cardId', 'filePath', 'fileType', 'type','created_at','updated_at','deleted_at');
-    protected $fillable=['detail', 'fileName'];
-    protected $appends=['hasImage'];
-    public function getHasImageAttribute()  {
-        return Files::where('id',$this->id)->value('filePath')!=null;
+    protected $hidden = array('cardId', 'filePath', 'fileType', 'type', 'created_at', 'updated_at', 'deleted_at');
+    protected $fillable = ['detail', 'fileName'];
+    protected $appends = ['hasImage', 'isPdf'];
+    public function getHasImageAttribute()
+    {
+        return Files::where('id', $this->id)->value('filePath') != null;
+    }
+    public function getIsPdfAttribute()
+    {
+        return Files::where('id', $this->id)->value('fileType') == "pdf" ? true : false;
     }
 }
