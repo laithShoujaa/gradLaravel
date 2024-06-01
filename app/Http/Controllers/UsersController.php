@@ -65,7 +65,7 @@ class UsersController extends Controller
                 $verf *= 10;
                 $verf += random_int(1, 9);
             }
-            $verf="0000";
+            $verf = "0000";
             $data = array('name' => $verf);
             $email = $request->email;
 
@@ -105,9 +105,11 @@ class UsersController extends Controller
                 $user = Users::where('email', $request->email)->first();
                 Auth::login($user);
                 $token = $user->createToken("api")->plainTextToken;
+                $userId = Users::where('email', $request->email)->value('id');
                 return response()->json([
                     'state' => true,
-                    'data' => $token
+                    'data' => $token,
+                    'cardCount' => Cards::where('userID', $userId)->count()
                 ]);
             } else {
                 return response()->json([

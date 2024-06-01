@@ -37,6 +37,8 @@ Route::post('/cardData', [CardsController::class, 'cardData']);
 Route::post('/editCard', [CardsController::class, 'editCard'])->middleware('auth:sanctum');
 Route::post('/deleteCard', [CardsController::class, 'deleteCard'])->middleware('auth:sanctum');
 //
+Route::post('/moveCard', [CardsController::class, 'moveCard'])->middleware('auth:sanctum');
+Route::post('/cardSafeKey', [CardsController::class, 'cardSafeKey'])->middleware('auth:sanctum');
 Route::post('/setAsPrimary', [CardsController::class, 'setAsPrimary'])->middleware('auth:sanctum');
 //
 Route::post('/addCard', [CardsController::class, 'addCard'])->middleware('auth:sanctum');

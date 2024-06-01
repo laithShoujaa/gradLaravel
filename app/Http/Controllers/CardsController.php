@@ -15,9 +15,41 @@ use Illuminate\Support\Facades\Storage;
 //use Validator;
 class CardsController extends Controller
 {
-    public function moveCard(Request $request) {
+    public function moveCard(Request $request)
+    {
         try {
-            //code...
+            $id = Auth::id();
+            $request->validate([
+                'passcode' => 'required',
+                'safeKey' => 'required'
+            ]);
+            $cardId = Cards::where('passcode', $request['passcode'])->where('userID', $id)->value('id');
+            if ($cardId == null) {
+                return response()->json([
+                    "state" => false
+                ], 403);
+            }
+            $safe = Access::where('cardId', $cardId)->value('safeKey');
+            if ($safe == null) {
+                return response()->json([
+                    "state" => false
+                ], 404);
+            }
+            if ($safe != $request['safeKey']) {
+                return response()->json([
+                    "state" => false
+                ], 210);
+            }
+            $userId = Access::where('cardId', $cardId)->value('userId');
+            $prim = Users::where('id', $userId)->value('cardId');
+            if ($prim == null) {
+                Users::where('id', $userId)->update(['cardId' => $cardId]);
+            }
+            Access::where('cardId', $cardId)->delete();
+            Cards::where('id', $cardId)->update(['userID' => $userId]);
+            return response()->json([
+                "state" => true
+            ], 200);
         } catch (\Throwable $th) {
             return response()->json([
                 "state" => false,
@@ -25,25 +57,38 @@ class CardsController extends Controller
             ], 400);
         }
     }
-    public function cardSafeKey(Request $request) {
+    public function cardSafeKey(Request $request)
+    {
         try {
-            $id=Auth::id();
+            $id = Auth::id();
             $request->validate([
-                'passcode'=>'required',
-                'userId'=>'required'
+                'passcode' => 'required',
+                'userId' => 'required'
             ]);
-            $userId=($request['userId']-20)/100;
-            $cardId=Cards::where('userID',$userId)->where('passcode',$request['passcode'])->value('id');
-            if($cardId==null){
+            $userId = ($request['userId'] - 20) / 100;
+            $cardId = Cards::where('userID', $userId)->where('passcode', $request['passcode'])->value('id');
+            if ($cardId == null) {
                 return response()->json([
-                    'state'=>false
-                ],404);
+                    'state' => false
+                ], 404);
             }
-            $safeKey=rand(1000,9999);
-            $s= Access::where('cardId',$cardId)->where('userId',$id)->value('safeKey');
-            if($s==null){
-                Access::
+            $safeKey = rand(1000, 9999);
+            $s = Access::where('cardId', $cardId)->where('userId', $id)->value('safeKey');
+            if ($s == null) {
+                Access::create([
+                    'userId' => $id,
+                    'cardId' => $cardId,
+                    'safKey' => $safeKey
+                ]);
+            } else {
+                Access::where('cardId', $cardId)->where('userId', $id)->update([
+                    'safeKey' => $safeKey
+                ]);
             }
+            return response()->json([
+                'state' => true,
+                'safeKey' => $safeKey
+            ]);
         } catch (\Throwable $th) {
             return response()->json([
                 "state" => false,
