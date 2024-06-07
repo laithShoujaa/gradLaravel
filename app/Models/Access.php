@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Access extends Model
 {
     use HasFactory;
+    public $timestamps = false;
     protected $table = 'access';
     protected $fillable = array('userId', 'cardId','safeKey');
 }

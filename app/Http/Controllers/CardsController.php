@@ -65,8 +65,11 @@ class CardsController extends Controller
                 'passcode' => 'required',
                 'userId' => 'required'
             ]);
-            $userId = ($request['userId'] - 20) / 100;
-            $cardId = Cards::where('userID', $userId)->where('passcode', $request['passcode'])->value('id');
+            $userId = Users::where('userID', $request->userId)->value('id');
+            $passcode = $request['passcode'];
+            $cardId = Cards::where("userID", $userId)
+                ->where("passcode", $request['passcode'])
+                ->value('id');
             if ($cardId == null) {
                 return response()->json([
                     'state' => false
@@ -75,10 +78,10 @@ class CardsController extends Controller
             $safeKey = rand(1000, 9999);
             $s = Access::where('cardId', $cardId)->where('userId', $id)->value('safeKey');
             if ($s == null) {
-                Access::create([
+                Access::insert([
                     'userId' => $id,
                     'cardId' => $cardId,
-                    'safKey' => $safeKey
+                    'safeKey' => $safeKey
                 ]);
             } else {
                 Access::where('cardId', $cardId)->where('userId', $id)->update([
@@ -114,8 +117,13 @@ class CardsController extends Controller
             Users::where('id', $id)->update([
                 'cardId' => $cardId
             ]);
+            $user = Users::where('id', $id)->first();
+            // echo $user;
+            // Auth::login($user);
+            $token = $user->createToken("api")->plainTextToken;
             return response()->json([
-                "state" => true
+                "state" => true,
+                "token" => $token
             ]);
         } catch (\Throwable $th) {
             return response()->json([
