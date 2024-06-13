@@ -29,18 +29,13 @@ class CardsController extends Controller
                     "state" => false
                 ], 403);
             }
-            $safe = Access::where('cardId', $cardId)->value('safeKey');
-            if ($safe == null) {
+            $userId = Access::where('cardId', $cardId)->where('safeKey', $request['safeKey'])->value('userId');
+            if ($userId == null) {
                 return response()->json([
                     "state" => false
                 ], 404);
             }
-            if ($safe != $request['safeKey']) {
-                return response()->json([
-                    "state" => false
-                ], 210);
-            }
-            $userId = Access::where('cardId', $cardId)->value('userId');
+
             $prim = Users::where('id', $userId)->value('cardId');
             if ($prim == null) {
                 Users::where('id', $userId)->update(['cardId' => $cardId]);
@@ -74,6 +69,11 @@ class CardsController extends Controller
                 return response()->json([
                     'state' => false
                 ], 404);
+            }
+            if (Users::where("cardId", $cardId)->value('id') != null) {
+                return response()->json([
+                    'state' => false
+                ], 210);
             }
             $safeKey = rand(1000, 9999);
             $s = Access::where('cardId', $cardId)->where('userId', $id)->value('safeKey');
