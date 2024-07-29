@@ -23,8 +23,11 @@ use Illuminate\Support\Facades\Auth;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/grad', function () {
+    return view('userpage');
+});
+Route::get('/twenty', function () {
+    return view('twenty');
 });
 /**user */
 Route::post('/register', [UsersController::class, 'register']);//end link

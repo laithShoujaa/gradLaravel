@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/mopile', function () {
+    return view('userpage');
 });
+
 route::get('li',[\App\Http\Controllers\Controller::class,'laith']);
