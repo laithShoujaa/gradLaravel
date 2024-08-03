@@ -13,10 +13,7 @@ class Users extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
     protected $table = 'users';
     public $timestamps = true;
-
-    use SoftDeletes;
-
-    protected $dates = ['deleted_at'];
+    
     protected $fillable = array('userID', 'email', 'password', 'cardId', 'picId');
 
 }

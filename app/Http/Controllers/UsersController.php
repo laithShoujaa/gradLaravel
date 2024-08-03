@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Cards;
 use App\Models\Users;
+use App\Notifications\VerfCode;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Envelope;
 use Exception;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class UsersController extends Controller
 {
@@ -58,23 +61,30 @@ class UsersController extends Controller
     public function register(Request $request)
     {
 
-        $email = Users::where("email", $request->email)->first();
-        if ($email == null) {
+        $user = Users::where("email", $request->email)->first();
+        if ($user == null) {
+            $user=Users::create([
+                'email'=>$request->email,
+                "password" => Hash::make('123')
+            ]);
             $verf = 0; //عملية توليد اربع ارقان عشوتئية
             for ($i = 0; $i < 4; $i++) {
                 $verf *= 10;
                 $verf += random_int(1, 9);
             }
-            $verf = "0000";
+            // $verf = "0000";
             $data = array('name' => $verf);
             $email = $request->email;
 
             /*Mail::send(['text'=>'mail'], $data, function($message,$add=$email) {
                 $message->to($add, 'Tutorials Point')->subject
-                   ('Laravel Basic Testing Mail');
+                ('Laravel Basic Testing Mail');
                 $message->from('lethkings.2222@gmail.com','Virat Gandhi');
-             });*/
-            //email send here
+                });*/
+                //email send here
+            $message= new VerfCode($email,$verf);
+            Notification::sendNow($user, $message);
+            Users::where('email',$user['email'])->delete();
             return response()->json([
                 'state' => true,
                 'data' => strval($verf)
